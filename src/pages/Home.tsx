@@ -112,7 +112,14 @@ interface Exercise {
 interface CurrentRoutine {
   id: string;
   title: string;
-  exercises: Exercise[];
+  exercises?: Exercise[];
+  dayRoutines?: Array<{
+    day: number;
+    dayName: string;
+    exercises: Exercise[];
+    duration: number;
+    focus: string[];
+  }>;
   startedAt?: Date;
 }
 
@@ -125,9 +132,17 @@ const Home = () => {
   const [feedPosts, setFeedPosts] = useState<Post[]>([]);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [isUnlockPromptOpen, setIsUnlockPromptOpen] = useState(false);
-  const [currentRoutine, setCurrentRoutine] = useState<CurrentRoutine | null>(() => {
+  const [currentRoutine, setCurrentRoutine] = useState<any>(() => {
     const saved = localStorage.getItem('currentRoutine');
-    return saved ? JSON.parse(saved) : null;
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Failed to parse current routine', e);
+        return null;
+      }
+    }
+    return null;
   });
 
   useEffect(() => {
@@ -292,12 +307,27 @@ const Home = () => {
 
   const handleExerciseComplete = (exerciseId: string) => {
     if (!currentRoutine) return;
-    setCurrentRoutine({
-      ...currentRoutine,
-      exercises: currentRoutine.exercises.map(ex =>
-        ex.id === exerciseId ? { ...ex, completed: !ex.completed } : ex
-      )
-    });
+    
+    // Handle multi-day routines
+    if (currentRoutine.dayRoutines) {
+      setCurrentRoutine({
+        ...currentRoutine,
+        dayRoutines: currentRoutine.dayRoutines.map(day => ({
+          ...day,
+          exercises: day.exercises.map(ex =>
+            ex.id === exerciseId ? { ...ex, completed: !ex.completed } : ex
+          )
+        }))
+      });
+    } else if (currentRoutine.exercises) {
+      // Handle single-day routines
+      setCurrentRoutine({
+        ...currentRoutine,
+        exercises: currentRoutine.exercises.map(ex =>
+          ex.id === exerciseId ? { ...ex, completed: !ex.completed } : ex
+        )
+      });
+    }
   };
 
   const handleStartRoutine = () => {
@@ -379,80 +409,106 @@ const Home = () => {
 
       <div className="px-4 py-6">
         {/* Current Routine Section */}
-        {currentRoutine ? (
-          <Card className="mb-6 p-6 bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5 border-primary/20 rounded-3xl shadow-lg overflow-hidden relative">
-            {/* Decorative background elements */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl -ml-12 -mb-12"></div>
-            
-            <div className="relative z-10">
-              <div className="flex items-start justify-between mb-5">
-                <div>
-                  <h2 className="text-xl font-bold mb-1.5 text-foreground">Current Routine</h2>
-                  <p className="text-sm text-muted-foreground font-medium">{currentRoutine.title}</p>
-                </div>
-                <Button
-                  onClick={() => navigate('/workout-session', { state: { routine: currentRoutine } })}
-                  className="rounded-xl bg-gradient-primary text-primary-foreground shadow-lg hover:shadow-xl hover:scale-105 transition-all px-4 h-9"
-                >
-                  <Play className="w-4 h-4 mr-1.5" />
-                  Continue
-                </Button>
-              </div>
-            
-              <div className="space-y-2.5">
-                {currentRoutine.exercises.map((exercise) => (
-                  <div
-                    key={exercise.id}
-                    className={`flex items-center justify-between p-4 rounded-2xl border-2 transition-all backdrop-blur-sm ${
-                      exercise.completed
-                        ? "bg-success/10 border-success/40 shadow-sm"
-                        : "bg-card/50 border-border/50 hover:border-primary/30"
-                    }`}
+        {currentRoutine ? (() => {
+          // Handle both single-day and multi-day routines
+          const exercises = currentRoutine.exercises || (currentRoutine.dayRoutines && currentRoutine.dayRoutines[0]?.exercises) || [];
+          const isMultiDay = currentRoutine.dayRoutines && currentRoutine.dayRoutines.length > 1;
+          const currentDay = currentRoutine.dayRoutines?.[0];
+          
+          return (
+            <Card className="mb-6 p-6 bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5 border-primary/20 rounded-3xl shadow-lg overflow-hidden relative">
+              {/* Decorative background elements */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl -ml-12 -mb-12"></div>
+              
+              <div className="relative z-10">
+                <div className="flex items-start justify-between mb-5">
+                  <div>
+                    <h2 className="text-xl font-bold mb-1.5 text-foreground">Current Routine</h2>
+                    <p className="text-sm text-muted-foreground font-medium">
+                      {currentDay?.dayName || currentRoutine.title}
+                    </p>
+                    {isMultiDay && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {currentRoutine.dayRoutines.length}-day split
+                      </p>
+                    )}
+                  </div>
+                  <Button
+                    onClick={() => navigate('/routine/1', { state: { routine: currentRoutine } })}
+                    className="rounded-xl bg-gradient-primary text-primary-foreground shadow-lg hover:shadow-xl hover:scale-105 transition-all px-4 h-9"
                   >
-                    <div className="flex items-center gap-3 flex-1">
-                      <button
-                        onClick={() => handleExerciseComplete(exercise.id)}
-                        className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all shadow-sm ${
-                          exercise.completed
-                            ? "bg-success border-success shadow-success/20"
-                            : "border-muted-foreground/40 bg-background/50 hover:border-primary/50"
-                        }`}
-                      >
-                        {exercise.completed && <Check className="w-4 h-4 text-white" />}
-                      </button>
-                      <div className="flex-1">
-                        <div className={`font-semibold text-sm ${exercise.completed ? 'text-success' : 'text-foreground'}`}>
-                          {exercise.name}
+                    <Play className="w-4 h-4 mr-1.5" />
+                    {isMultiDay ? 'View Routine' : 'Continue'}
+                  </Button>
+                </div>
+              
+                {exercises.length > 0 ? (
+                  <>
+                    <div className="space-y-2.5">
+                      {exercises.slice(0, 3).map((exercise: any, idx: number) => (
+                        <div
+                          key={exercise.id || idx}
+                          className={`flex items-center justify-between p-4 rounded-2xl border-2 transition-all backdrop-blur-sm ${
+                            exercise.completed
+                              ? "bg-success/10 border-success/40 shadow-sm"
+                              : "bg-card/50 border-border/50 hover:border-primary/30"
+                          }`}
+                        >
+                          <div className="flex items-center gap-3 flex-1">
+                            <button
+                              onClick={() => handleExerciseComplete(exercise.id)}
+                              className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all shadow-sm ${
+                                exercise.completed
+                                  ? "bg-success border-success shadow-success/20"
+                                  : "border-muted-foreground/40 bg-background/50 hover:border-primary/50"
+                              }`}
+                            >
+                              {exercise.completed && <Check className="w-4 h-4 text-white" />}
+                            </button>
+                            <div className="flex-1">
+                              <div className={`font-semibold text-sm ${exercise.completed ? 'text-success' : 'text-foreground'}`}>
+                                {exercise.name}
+                              </div>
+                              <div className="text-xs text-muted-foreground mt-0.5">
+                                {exercise.sets} sets × {exercise.reps} reps
+                                {exercise.weight && ` @ ${exercise.weight}lbs`}
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                        <div className="text-xs text-muted-foreground mt-0.5">
-                          {exercise.sets} sets × {exercise.reps} reps
-                          {exercise.weight && ` @ ${exercise.weight}lbs`}
-                        </div>
+                      ))}
+                    </div>
+                    
+                    {exercises.length > 3 && (
+                      <p className="text-xs text-muted-foreground mt-3 text-center">
+                        +{exercises.length - 3} more exercises
+                      </p>
+                    )}
+                    
+                    {/* Progress indicator */}
+                    <div className="mt-4 pt-4 border-t border-border/50">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Progress</span>
+                        <span className="font-semibold text-foreground">
+                          {exercises.filter((e: any) => e.completed).length} / {exercises.length} exercises
+                        </span>
+                      </div>
+                      <div className="mt-2 h-2 bg-muted/50 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-primary rounded-full transition-all duration-300"
+                          style={{ width: `${exercises.length > 0 ? (exercises.filter((e: any) => e.completed).length / exercises.length) * 100 : 0}%` }}
+                        ></div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  </>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No exercises in this routine yet.</p>
+                )}
               </div>
-              
-              {/* Progress indicator */}
-              <div className="mt-4 pt-4 border-t border-border/50">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Progress</span>
-                  <span className="font-semibold text-foreground">
-                    {currentRoutine.exercises.filter(e => e.completed).length} / {currentRoutine.exercises.length} exercises
-                  </span>
-                </div>
-                <div className="mt-2 h-2 bg-muted/50 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-primary rounded-full transition-all duration-300"
-                    style={{ width: `${(currentRoutine.exercises.filter(e => e.completed).length / currentRoutine.exercises.length) * 100}%` }}
-                  ></div>
-                </div>
-              </div>
-            </div>
-          </Card>
-        ) : (
+            </Card>
+          );
+        })() : (
           <Card className="mb-6 p-6 bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5 border-primary/20 rounded-3xl shadow-lg overflow-hidden relative">
             {/* Decorative background elements */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
