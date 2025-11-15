@@ -1,5 +1,4 @@
 import { PostGridItem } from './PostGridItem';
-import { LockedFeedOverlay } from './LockedFeedOverlay';
 import { Friend, Post } from '@/types';
 
 interface FeedGridProps {
@@ -34,14 +33,6 @@ export const FeedGrid = ({ friends, isLocked, userPost, onOpenPostModal }: FeedG
           />
         ))}
       </div>
-
-      {/* Locked Overlay */}
-      {isLocked && (
-        <LockedFeedOverlay 
-          friendCount={friends.length} 
-          onPostClick={onOpenPostModal || (() => {})} 
-        />
-      )}
     </div>
   );
 };

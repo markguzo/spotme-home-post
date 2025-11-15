@@ -1,4 +1,4 @@
-import { User, Post, STORAGE_KEYS } from '@/types';
+import { User, Post, Comment, STORAGE_KEYS } from '@/types';
 
 export const storage = {
   getUser: (): User | null => {
@@ -19,6 +19,23 @@ export const storage = {
     const posts = storage.getPosts();
     posts.unshift(post);
     localStorage.setItem(STORAGE_KEYS.POSTS, JSON.stringify(posts));
+  },
+
+  addComment: (postId: string, comment: Comment): void => {
+    const posts = storage.getPosts();
+    const updatedPosts = posts.map(post => {
+      if (post.id === postId) {
+        return {
+          ...post,
+          engagement: {
+            ...post.engagement,
+            comments: [...post.engagement.comments, comment]
+          }
+        };
+      }
+      return post;
+    });
+    localStorage.setItem(STORAGE_KEYS.POSTS, JSON.stringify(updatedPosts));
   },
 
   getStreak: (): number => {

@@ -1,50 +1,79 @@
-import { Star, Dumbbell } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Dumbbell, Lock, Star } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Badge } from './ui/badge';
 import { Post } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
+import { CommentSection } from './CommentSection';
 
 interface FeedPostCardProps {
   post: Post;
   onPostClick: (post: Post) => void;
+  onUnlockClick: () => void;
   isLocked: boolean;
   currentUserId: string;
+  onAddComment: (postId: string, text: string) => void;
+  currentUserName: string;
+  currentUserAvatar: string;
   style?: React.CSSProperties;
 }
 
 export const FeedPostCard = ({ 
   post, 
   onPostClick,
+  onUnlockClick,
   isLocked,
   currentUserId,
+  onAddComment,
+  currentUserName,
+  currentUserAvatar,
   style 
 }: FeedPostCardProps) => {
   const timeAgo = formatDistanceToNow(new Date(post.timestamp), { addSuffix: true });
   const isUserPost = post.userId === currentUserId;
 
+  const handleCardClick = () => {
+    if (isLocked) {
+      onUnlockClick();
+    } else {
+      onPostClick(post);
+    }
+  };
+
   return (
     <div 
-      className="bg-card rounded-3xl overflow-hidden mb-6 mx-4 shadow-lg transition-all duration-300 animate-fade-in"
+      className={`bg-card rounded-3xl overflow-hidden mb-6 mx-4 shadow-lg transition-all duration-300 relative ${
+        isLocked ? 'cursor-pointer hover:scale-[1.02] hover:shadow-2xl' : 'hover:shadow-xl'
+      } animate-in fade-in slide-in-from-bottom-4`}
       style={style}
-      onClick={() => !isLocked && onPostClick(post)}
+      onClick={isLocked ? handleCardClick : undefined}
     >
-      {/* Header - Hidden when locked */}
+      {/* Individual Card Blur Overlay - Only when locked */}
+      {isLocked && (
+        <div className="absolute inset-0 backdrop-blur-[20px] bg-black/40 z-10 flex items-center justify-center">
+          <div className="bg-black/80 backdrop-blur-sm rounded-2xl p-4 border border-primary/30">
+            <Lock className="h-6 w-6 text-primary mx-auto mb-2" />
+            <p className="text-white text-sm font-semibold">Tap to unlock</p>
+          </div>
+        </div>
+      )}
+
+      {/* Header - Only show when unlocked */}
       {!isLocked && (
         <div className="flex items-center gap-3 p-5 pb-3">
-          <Avatar className="h-11 w-11 ring-2 ring-primary/20">
+          <Avatar className="h-11 w-11 border-2 border-primary/20">
             <AvatarImage src={post.userAvatar} />
             <AvatarFallback>{post.userName[0]}</AvatarFallback>
           </Avatar>
-          <div className="flex flex-col flex-1">
+          <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-foreground text-base">{post.userName}</span>
+              <span className="font-bold text-base truncate">
+                {isUserPost ? 'You' : post.userName}
+              </span>
               {isUserPost && (
-                <Badge variant="default" className="text-xs px-2 py-0 h-5">
-                  You
-                </Badge>
+                <Badge variant="secondary" className="text-xs px-2 py-0">You</Badge>
               )}
             </div>
-            <span className="text-sm text-muted-foreground font-medium">{timeAgo}</span>
+            <span className="text-sm text-muted-foreground">{timeAgo}</span>
           </div>
           
           {post.meta.pr && (
@@ -52,17 +81,6 @@ export const FeedPostCard = ({
               <Star className="h-5 w-5 text-white fill-white" />
             </div>
           )}
-        </div>
-      )}
-
-      {/* Locked State Header Placeholder */}
-      {isLocked && (
-        <div className="flex items-center gap-3 p-5 pb-3 opacity-40">
-          <div className="h-11 w-11 rounded-full bg-muted animate-pulse" />
-          <div className="flex flex-col gap-2 flex-1">
-            <div className="h-4 w-24 bg-muted rounded animate-pulse" />
-            <div className="h-3 w-16 bg-muted rounded animate-pulse" />
-          </div>
         </div>
       )}
 
@@ -110,6 +128,18 @@ export const FeedPostCard = ({
         <div className="px-5 py-4">
           <p className="text-foreground text-base leading-relaxed">{post.caption}</p>
         </div>
+      )}
+
+      {/* Comments Section - Only show when unlocked */}
+      {!isLocked && (
+        <CommentSection
+          postId={post.id}
+          comments={post.engagement.comments}
+          onAddComment={onAddComment}
+          currentUserId={currentUserId}
+          currentUserName={currentUserName}
+          currentUserAvatar={currentUserAvatar}
+        />
       )}
     </div>
   );
