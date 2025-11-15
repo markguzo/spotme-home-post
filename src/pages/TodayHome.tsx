@@ -235,6 +235,14 @@ const TodayHome = () => {
     setPosted(hasPostedToday());
     setStreak(storage.getStreak());
 
+    // Dev mode debug helper
+    if (import.meta.env.DEV) {
+      (window as any).debugClearData = () => {
+        storage.clearAllData();
+        window.location.reload();
+      };
+    }
+
     // Load user post and friend posts
     const userPost = getUserPost(userData);
     if (userPost && hasPostedToday()) {

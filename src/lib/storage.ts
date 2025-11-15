@@ -48,4 +48,11 @@ export const storage = {
       });
     }
   },
+
+  clearAllData: (): void => {
+    localStorage.removeItem(STORAGE_KEYS.USER);
+    localStorage.removeItem(STORAGE_KEYS.POSTS);
+    localStorage.removeItem(STORAGE_KEYS.STREAK);
+    localStorage.removeItem(STORAGE_KEYS.LAST_POST_DATE);
+  },
 };

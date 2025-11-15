@@ -11,7 +11,7 @@ export const LockedFeedOverlay = ({ friendCount }: LockedFeedOverlayProps) => {
 
   return (
     <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-      <div className="bg-black/80 backdrop-blur-xl rounded-3xl p-10 max-w-md mx-4 text-center border-2 border-primary/30 shadow-2xl pointer-events-auto">
+      <div className="bg-black/95 backdrop-blur-2xl rounded-3xl p-12 max-w-xl mx-4 text-center border-2 border-primary/40 shadow-2xl pointer-events-auto">
         <div className="mb-6">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary-dark mb-4 shadow-lg">
             <Lock className="h-10 w-10 text-white" />
@@ -33,7 +33,7 @@ export const LockedFeedOverlay = ({ friendCount }: LockedFeedOverlayProps) => {
         <Button
           onClick={() => navigate('/post')}
           size="lg"
-          className="w-full h-16 text-xl font-bold bg-gradient-to-r from-primary via-primary to-primary-dark hover:shadow-2xl hover:scale-105 transition-all duration-300 shadow-xl"
+          className="w-full h-16 text-xl font-bold bg-gradient-to-r from-primary via-primary to-primary-dark hover:shadow-2xl hover:scale-105 transition-all duration-300 shadow-xl animate-pulse"
         >
           <Camera className="mr-3 h-6 w-6" />
           📸 Post Your Workout
