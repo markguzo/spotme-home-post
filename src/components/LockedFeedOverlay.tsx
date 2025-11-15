@@ -10,37 +10,37 @@ export const LockedFeedOverlay = ({ friendCount }: LockedFeedOverlayProps) => {
   const navigate = useNavigate();
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center z-10">
-      <div className="bg-black/70 backdrop-blur-md rounded-2xl p-8 max-w-md mx-4 text-center border border-white/10">
-        <div className="mb-4">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/20 mb-4">
-            <Lock className="h-8 w-8 text-primary-foreground" />
+    <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+      <div className="bg-black/80 backdrop-blur-xl rounded-3xl p-10 max-w-md mx-4 text-center border-2 border-primary/30 shadow-2xl pointer-events-auto">
+        <div className="mb-6">
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary-dark mb-4 shadow-lg">
+            <Lock className="h-10 w-10 text-white" />
           </div>
         </div>
         
-        <h2 className="text-2xl font-bold text-white mb-2">
-          Your crew is crushing it... 👀
+        <h2 className="text-3xl font-extrabold text-white mb-3 leading-tight">
+          Your crew is working out right now 👀
         </h2>
         
-        <p className="text-white/70 mb-2">
-          {friendCount} of your crew showed up today
+        <p className="text-white/90 text-lg mb-2 font-semibold">
+          {friendCount} friends crushed their sessions today
         </p>
         
-        <p className="text-sm text-white/50 mb-6">
-          Post your session to see what they're really doing
+        <p className="text-base text-white/60 mb-8">
+          Post your workout to see what they're doing
         </p>
 
         <Button
           onClick={() => navigate('/post')}
           size="lg"
-          className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-primary to-primary-dark hover:opacity-90 transition-opacity shadow-2xl"
+          className="w-full h-16 text-xl font-bold bg-gradient-to-r from-primary via-primary to-primary-dark hover:shadow-2xl hover:scale-105 transition-all duration-300 shadow-xl"
         >
-          <Camera className="mr-2 h-5 w-5" />
-          Post Your Session
+          <Camera className="mr-3 h-6 w-6" />
+          📸 Post Your Workout
         </Button>
 
-        <p className="text-xs text-white/40 mt-4">
-          Don't let them show you up 💪
+        <p className="text-sm text-white/50 mt-5 font-medium">
+          Don't miss out on the action 💪
         </p>
       </div>
     </div>

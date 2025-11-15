@@ -283,58 +283,9 @@ const TodayHome = () => {
     };
   };
 
-  const handleLike = (postId: string) => {
-    setFeedPosts(prevPosts => 
-      prevPosts.map(post => {
-        if (post.id === postId) {
-          const isLiked = post.engagement.likedBy.includes(user?.id || '');
-          return {
-            ...post,
-            engagement: {
-              ...post.engagement,
-              likes: isLiked ? post.engagement.likes - 1 : post.engagement.likes + 1,
-              likedBy: isLiked 
-                ? post.engagement.likedBy.filter(id => id !== user?.id)
-                : [...post.engagement.likedBy, user?.id || '']
-            }
-          };
-        }
-        return post;
-      })
-    );
-  };
-
-  const handleComment = (postId: string, commentText: string) => {
-    if (!user) return;
-    
-    const newComment = {
-      id: `c_${Date.now()}`,
-      userId: user.id,
-      userName: user.name,
-      userAvatar: `https://picsum.photos/seed/${user.username}/200`,
-      text: commentText,
-      timestamp: new Date().toISOString()
-    };
-
-    setFeedPosts(prevPosts =>
-      prevPosts.map(post => {
-        if (post.id === postId) {
-          return {
-            ...post,
-            engagement: {
-              ...post.engagement,
-              comments: [...post.engagement.comments, newComment]
-            }
-          };
-        }
-        return post;
-      })
-    );
-  };
-
   const handlePostClick = (post: Post) => {
     console.log('Post clicked:', post);
-    // Future: Open full-screen modal
+    // TODO: Open full-screen WorkoutDetailView
   };
 
   if (!user) return null;
@@ -353,11 +304,9 @@ const TodayHome = () => {
       />
 
       {/* Vertical Feed - The Hero */}
-      <VerticalFeed
+      <VerticalFeed 
         posts={feedPosts}
         isLocked={!posted}
-        onLike={handleLike}
-        onComment={handleComment}
         onPostClick={handlePostClick}
         currentUserId={user.id}
       />
