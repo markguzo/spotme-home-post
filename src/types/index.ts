@@ -25,6 +25,21 @@ export interface Comment {
   timestamp: string;
 }
 
+export interface PhotoReaction {
+  id: string;
+  userId: string;
+  userName: string;
+  userAvatar: string;
+  photoUri: string;
+  timestamp: string;
+}
+
+export interface EmojiReaction {
+  emoji: string;
+  count: number;
+  userIds: string[];
+}
+
 export interface Post {
   id: string;
   userId: string;
@@ -42,6 +57,8 @@ export interface Post {
     likes: number;
     likedBy: string[];
     comments: Comment[];
+    photoReactions: PhotoReaction[];
+    emojiReactions: EmojiReaction[];
   };
 }
 
