@@ -47,13 +47,40 @@ export const FeedPostCard = ({
       style={style}
       onClick={isLocked ? handleCardClick : undefined}
     >
-      {/* Individual Card Blur Overlay - Only when locked */}
+      {/* When LOCKED: Premium frosted glass overlay */}
       {isLocked && (
-        <div className="absolute inset-0 backdrop-blur-[20px] bg-black/40 z-10 flex items-center justify-center">
-          <div className="bg-black/80 backdrop-blur-sm rounded-2xl p-4 border border-primary/30">
-            <Lock className="h-6 w-6 text-primary mx-auto mb-2" />
-            <p className="text-white text-sm font-semibold">Tap to unlock</p>
+        <div className="absolute inset-0 z-10 flex items-center justify-center">
+          {/* Gradient overlay - purple to black */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background/60 to-background/90 backdrop-blur-xl" />
+          
+          {/* Animated shimmer effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-[shimmer_3s_ease-in-out_infinite]" 
+               style={{ backgroundSize: '200% 100%' }} />
+          
+          {/* Center content */}
+          <div className="relative z-20 text-center px-6">
+            {/* Animated glowing lock icon */}
+            <div className="relative inline-block mb-4">
+              {/* Glow effect */}
+              <div className="absolute inset-0 bg-primary/40 blur-2xl rounded-full animate-pulse" />
+              
+              {/* Lock icon */}
+              <div className="relative bg-gradient-to-br from-primary via-primary-dark to-primary/80 rounded-full p-5 shadow-2xl">
+                <Lock className="h-10 w-10 text-white drop-shadow-lg" strokeWidth={2.5} />
+              </div>
+            </div>
+            
+            {/* Text content */}
+            <h3 className="text-xl font-bold text-white mb-2 drop-shadow-lg">
+              Post to Unlock
+            </h3>
+            <p className="text-sm text-white/80 font-medium drop-shadow">
+              Tap to share your workout
+            </p>
           </div>
+          
+          {/* Border glow effect */}
+          <div className="absolute inset-0 rounded-3xl border border-primary/20 shadow-[inset_0_0_20px_rgba(124,124,250,0.1)]" />
         </div>
       )}
 
