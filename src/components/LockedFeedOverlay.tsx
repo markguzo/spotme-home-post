@@ -10,8 +10,8 @@ export const LockedFeedOverlay = ({ friendCount }: LockedFeedOverlayProps) => {
   const navigate = useNavigate();
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-      <div className="bg-black/95 backdrop-blur-2xl rounded-3xl p-12 max-w-xl mx-4 text-center border-2 border-primary/40 shadow-2xl pointer-events-auto">
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/90 backdrop-blur-sm">
+      <div className="bg-black/95 backdrop-blur-2xl rounded-3xl p-12 max-w-xl mx-4 text-center border-2 border-primary/40 shadow-2xl">
         <div className="mb-6">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary-dark mb-4 shadow-lg">
             <Lock className="h-10 w-10 text-white" />
