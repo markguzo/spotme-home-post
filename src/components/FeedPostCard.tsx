@@ -1,14 +1,11 @@
-import { useState } from 'react';
-import { Heart, MessageCircle, Star } from 'lucide-react';
+import { Star, Dumbbell } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Button } from './ui/button';
+import { Badge } from './ui/badge';
 import { Post } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
 
 interface FeedPostCardProps {
   post: Post;
-  onLike: (postId: string) => void;
-  onComment: (postId: string, comment: string) => void;
   onPostClick: (post: Post) => void;
   isLocked: boolean;
   currentUserId: string;
@@ -17,177 +14,83 @@ interface FeedPostCardProps {
 
 export const FeedPostCard = ({ 
   post, 
-  onLike, 
-  onComment, 
   onPostClick,
   isLocked,
   currentUserId,
   style 
 }: FeedPostCardProps) => {
-  const [commentText, setCommentText] = useState('');
-  const [showCommentInput, setShowCommentInput] = useState(false);
-  const [isLiked, setIsLiked] = useState(post.engagement.likedBy.includes(currentUserId));
-  const [likeCount, setLikeCount] = useState(post.engagement.likes);
-
-  const handleLike = () => {
-    if (isLocked) return;
-    setIsLiked(!isLiked);
-    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
-    onLike(post.id);
-  };
-
-  const handleCommentSubmit = () => {
-    if (!commentText.trim() || isLocked) return;
-    onComment(post.id, commentText);
-    setCommentText('');
-    setShowCommentInput(false);
-  };
-
-  const handleDoubleClick = () => {
-    if (isLocked || isLiked) return;
-    handleLike();
-  };
-
   const timeAgo = formatDistanceToNow(new Date(post.timestamp), { addSuffix: true });
   const isUserPost = post.userId === currentUserId;
 
   return (
     <div 
-      className="bg-card border border-border rounded-2xl overflow-hidden mb-4 mx-4 shadow-sm hover:shadow-md transition-shadow animate-fade-in"
+      className="bg-card rounded-3xl overflow-hidden mb-6 mx-4 shadow-lg transition-all duration-300 animate-fade-in"
       style={style}
+      onClick={() => !isLocked && onPostClick(post)}
     >
-      {/* Header */}
-      <div className="flex items-center justify-between p-4">
-        <div className="flex items-center gap-3">
-          <Avatar className="h-10 w-10 ring-2 ring-primary/10">
-            <AvatarImage src={post.userAvatar} />
-            <AvatarFallback>{post.userName[0]}</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-foreground">{post.userName}</span>
-              {isUserPost && (
-                <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full font-bold">
-                  You
-                </span>
-              )}
-            </div>
-            <span className="text-xs text-muted-foreground">{timeAgo}</span>
+      {/* Minimal Header */}
+      <div className="flex items-center gap-3 p-5 pb-3">
+        <Avatar className="h-11 w-11 ring-2 ring-primary/20">
+          <AvatarImage src={post.userAvatar} />
+          <AvatarFallback>{post.userName[0]}</AvatarFallback>
+        </Avatar>
+        <div className="flex flex-col flex-1">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-foreground text-base">{post.userName}</span>
+            {isUserPost && (
+              <Badge variant="default" className="text-xs px-2 py-0 h-5">
+                You
+              </Badge>
+            )}
           </div>
+          <span className="text-sm text-muted-foreground font-medium">{timeAgo}</span>
         </div>
         
         {post.meta.pr && (
-          <div className="bg-amber-500 rounded-full p-2 shadow-lg">
-            <Star className="h-4 w-4 text-white fill-white" />
+          <div className="bg-gradient-to-br from-amber-400 to-amber-600 rounded-full p-2.5 shadow-xl">
+            <Star className="h-5 w-5 text-white fill-white" />
           </div>
         )}
       </div>
 
-      {/* Image */}
-      <div 
-        className="relative aspect-square w-full overflow-hidden cursor-pointer group"
-        onClick={() => !isLocked && onPostClick(post)}
-        onDoubleClick={handleDoubleClick}
-      >
+      {/* Large Workout Image with Badge Overlay */}
+      <div className="relative aspect-[4/5] w-full overflow-hidden cursor-pointer group">
         <img 
           src={post.imageUri} 
           alt={`${post.userName}'s workout`}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
-      </div>
-
-      {/* Engagement Bar */}
-      <div className="p-4 space-y-3">
-        {/* Action Buttons */}
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="p-0 h-auto hover:bg-transparent group"
-            onClick={handleLike}
-            disabled={isLocked}
-          >
-            <Heart 
-              className={`h-6 w-6 transition-all duration-200 ${
-                isLiked 
-                  ? 'fill-red-500 text-red-500 scale-110' 
-                  : 'text-foreground group-hover:text-red-500 group-hover:scale-110'
-              }`}
-            />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="p-0 h-auto hover:bg-transparent group"
-            onClick={() => !isLocked && setShowCommentInput(!showCommentInput)}
-            disabled={isLocked}
-          >
-            <MessageCircle className="h-6 w-6 text-foreground group-hover:text-primary transition-colors" />
-          </Button>
-        </div>
-
-        {/* Likes Count */}
-        <div className="text-sm font-semibold text-foreground">
-          {likeCount} {likeCount === 1 ? 'like' : 'likes'}
-        </div>
-
-        {/* Caption */}
-        {post.caption && (
-          <div className="text-sm">
-            <span className="font-semibold text-foreground">{post.userName}</span>{' '}
-            <span className="text-foreground">{post.caption}</span>
-          </div>
-        )}
-
-        {/* Workout Meta */}
+        
+        {/* Workout Badge Overlay */}
         {post.meta.workoutType && (
-          <div className="text-xs text-muted-foreground">
-            {post.meta.workoutType}
-            {post.meta.duration && ` • ${post.meta.duration} min`}
-          </div>
-        )}
-
-        {/* Comments Preview */}
-        {post.engagement.comments.length > 0 && (
-          <div className="space-y-2">
-            <button 
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              onClick={() => !isLocked && onPostClick(post)}
-              disabled={isLocked}
-            >
-              View all {post.engagement.comments.length} comments
-            </button>
-            {post.engagement.comments.slice(0, 2).map((comment) => (
-              <div key={comment.id} className="text-sm">
-                <span className="font-semibold text-foreground">{comment.userName}</span>{' '}
-                <span className="text-foreground">{comment.text}</span>
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-6 pt-20">
+            <div className="flex items-center gap-2 text-white">
+              <Dumbbell className="h-5 w-5" />
+              <span className="text-xl font-bold">
+                {post.meta.workoutType}
+                {post.meta.duration && (
+                  <span className="text-base font-semibold ml-2 opacity-90">
+                    • {post.meta.duration} min
+                  </span>
+                )}
+              </span>
+            </div>
+            {post.meta.pr && (
+              <div className="mt-2 text-amber-400 text-sm font-bold flex items-center gap-1">
+                <Star className="h-4 w-4 fill-current" />
+                <span>Personal Record!</span>
               </div>
-            ))}
-          </div>
-        )}
-
-        {/* Comment Input */}
-        {showCommentInput && !isLocked && (
-          <div className="flex items-center gap-2 pt-2 border-t border-border animate-fade-in">
-            <input
-              type="text"
-              placeholder="Add a comment..."
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleCommentSubmit()}
-              className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
-            />
-            <Button
-              size="sm"
-              onClick={handleCommentSubmit}
-              disabled={!commentText.trim()}
-              className="h-8 px-4"
-            >
-              Post
-            </Button>
+            )}
           </div>
         )}
       </div>
+
+      {/* Caption (if provided) */}
+      {post.caption && (
+        <div className="px-5 py-4">
+          <p className="text-foreground text-base leading-relaxed">{post.caption}</p>
+        </div>
+      )}
     </div>
   );
 };
