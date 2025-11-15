@@ -16,13 +16,32 @@ export interface Session {
   };
 }
 
+export interface Comment {
+  id: string;
+  userId: string;
+  userName: string;
+  userAvatar: string;
+  text: string;
+  timestamp: string;
+}
+
 export interface Post {
   id: string;
   userId: string;
+  userName: string;
+  userAvatar: string;
   imageUri: string;
   timestamp: string;
+  caption?: string;
   meta: {
     pr: boolean;
+    workoutType?: string;
+    duration?: number;
+  };
+  engagement: {
+    likes: number;
+    likedBy: string[];
+    comments: Comment[];
   };
 }
 
@@ -38,4 +57,7 @@ export const STORAGE_KEYS = {
   POSTS: 'spotme:posts',
   STREAK: 'spotme:streak',
   LAST_POST_DATE: 'spotme:lastPostDate',
+  LIKES: 'spotme:likes',
+  LIKED_POSTS: 'spotme:likedPosts',
+  COMMENTS: 'spotme:comments',
 } as const;
