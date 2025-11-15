@@ -43,11 +43,21 @@ const PostPhoto = () => {
     const post: Post = {
       id: `p_${Date.now()}`,
       userId: user.id,
+      userName: user.name,
+      userAvatar: `https://picsum.photos/seed/${user.username}/200`,
       imageUri,
       timestamp,
+      caption: 'Just crushed today\'s workout! 💪',
       meta: {
         pr: false,
+        workoutType: 'Push Day',
+        duration: 60
       },
+      engagement: {
+        likes: 0,
+        likedBy: [],
+        comments: []
+      }
     };
 
     storage.addPost(post);
