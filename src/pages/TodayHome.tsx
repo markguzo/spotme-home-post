@@ -229,6 +229,11 @@ const TodayHome = () => {
   const [feedPosts, setFeedPosts] = useState<Post[]>([]);
 
   useEffect(() => {
+    // Auto-clear data in dev mode on every load
+    if (import.meta.env.DEV) {
+      storage.clearAllData();
+    }
+    
     storage.initializeDefaults();
     const userData = storage.getUser();
     setUser(userData);
