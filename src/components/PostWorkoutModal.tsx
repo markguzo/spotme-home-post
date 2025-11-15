@@ -106,7 +106,9 @@ export const PostWorkoutModal = ({ isOpen, onClose, onPostSuccess }: PostWorkout
       engagement: {
         likes: 0,
         likedBy: [],
-        comments: []
+        comments: [],
+        photoReactions: [],
+        emojiReactions: []
       }
     };
 

@@ -56,7 +56,9 @@ const PostPhoto = () => {
       engagement: {
         likes: 0,
         likedBy: [],
-        comments: []
+        comments: [],
+        photoReactions: [],
+        emojiReactions: []
       }
     };
 
