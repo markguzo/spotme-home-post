@@ -6,6 +6,7 @@ import { UnlockPromptModal } from '@/components/UnlockPromptModal';
 import { storage } from '@/lib/storage';
 import { hasPostedToday } from '@/lib/streak';
 import { User, Post, Comment } from '@/types';
+import { currentUser } from "@/data/mockData";
 import gymPhoto1 from '@/assets/gym-photo-1.png';
 import gymPhoto2 from '@/assets/gym-photo-2.png';
 import gymPhoto3 from '@/assets/gym-photo-3.png';
@@ -17,7 +18,7 @@ const mockFeedPosts: Post[] = [
     id: 'p1',
     userId: 'f1',
     userName: 'Sam',
-    userAvatar: 'https://i.pravatar.cc/200?img=12',
+    userAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop',
     imageUri: gymPhoto1,
     timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
     caption: 'New deadlift PR! 405lbs × 3 💪 Feeling unstoppable',
@@ -37,7 +38,7 @@ const mockFeedPosts: Post[] = [
     id: 'p2',
     userId: 'f2',
     userName: 'Riley',
-    userAvatar: 'https://i.pravatar.cc/200?img=45',
+    userAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop',
     imageUri: gymPhoto2,
     timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
     caption: 'Morning leg day complete. Squats never get easier 😅',
@@ -56,7 +57,7 @@ const mockFeedPosts: Post[] = [
     id: 'p3',
     userId: 'f3',
     userName: 'Jordan',
-    userAvatar: 'https://i.pravatar.cc/200?img=33',
+    userAvatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop',
     imageUri: gymPhoto3,
     timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
     caption: 'Early bird gets the gains 🌅',
@@ -67,7 +68,7 @@ const mockFeedPosts: Post[] = [
     id: 'p4',
     userId: 'f4',
     userName: 'Casey',
-    userAvatar: 'https://i.pravatar.cc/200?img=27',
+    userAvatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop',
     imageUri: gymPhoto4,
     timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
     caption: 'Bench press PR! 225lbs for reps 🎯',
@@ -86,7 +87,7 @@ const mockFeedPosts: Post[] = [
     id: 'p5',
     userId: 'f5',
     userName: 'Morgan',
-    userAvatar: 'https://i.pravatar.cc/200?img=51',
+    userAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop',
     imageUri: gymPhoto5,
     timestamp: new Date(Date.now() - 7 * 60 * 60 * 1000).toISOString(),
     caption: 'Recovery day yoga and stretching 🧘',
@@ -141,7 +142,7 @@ const TodayHome = () => {
     return {
       ...todayPost,
       userName: userData.name,
-      userAvatar: `https://i.pravatar.cc/200?u=${userData.username}`,
+      userAvatar: currentUser.photo,
       caption: 'Just crushed today\'s workout! 💪',
       meta: { ...todayPost.meta, workoutType: 'Push Day', duration: 60 },
       engagement: { likes: 0, likedBy: [], comments: [], photoReactions: [], emojiReactions: [] }
@@ -174,7 +175,7 @@ const TodayHome = () => {
       id: `c_${Date.now()}`,
       userId: user!.id,
       userName: user!.name,
-      userAvatar: `https://i.pravatar.cc/200?u=${user!.username}`,
+      userAvatar: currentUser.photo,
       text,
       timestamp: new Date().toISOString()
     };
@@ -214,7 +215,7 @@ const TodayHome = () => {
         currentUserId={user.id}
         onAddComment={handleAddComment}
         currentUserName={user.name}
-        currentUserAvatar={`https://i.pravatar.cc/200?u=${user.username}`}
+        currentUserAvatar={currentUser.photo}
         onLike={handleLike}
       />
 

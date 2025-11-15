@@ -13,6 +13,19 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
+      fontSize: {
+        xs: ['0.75rem', { lineHeight: '1rem', letterSpacing: '-0.01em' }],
+        sm: ['0.875rem', { lineHeight: '1.25rem', letterSpacing: '-0.01em' }],
+        base: ['1rem', { lineHeight: '1.5rem', letterSpacing: '-0.011em' }],
+        lg: ['1.125rem', { lineHeight: '1.75rem', letterSpacing: '-0.011em' }],
+        xl: ['1.25rem', { lineHeight: '1.75rem', letterSpacing: '-0.012em' }],
+        '2xl': ['1.5rem', { lineHeight: '2rem', letterSpacing: '-0.014em' }],
+        '3xl': ['1.875rem', { lineHeight: '2.25rem', letterSpacing: '-0.016em' }],
+        '4xl': ['2.25rem', { lineHeight: '2.5rem', letterSpacing: '-0.018em' }],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -51,6 +64,16 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        "accent-blue": "hsl(var(--accent-blue))",
+        "accent-glow": "hsl(var(--accent-glow))",
+        "dark-card": "hsl(var(--dark-card))",
+        "dark-border": "hsl(var(--dark-border))",
+        "text-primary": "hsl(var(--text-primary))",
+        "text-secondary": "hsl(var(--text-secondary))",
+        "text-muted": "hsl(var(--text-muted))",
+      },
+      backgroundImage: {
+        "gradient-primary": "var(--gradient-primary)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -78,6 +101,7 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
       },
     },
   },
