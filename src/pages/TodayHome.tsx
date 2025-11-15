@@ -6,15 +6,20 @@ import { UnlockPromptModal } from '@/components/UnlockPromptModal';
 import { storage } from '@/lib/storage';
 import { hasPostedToday } from '@/lib/streak';
 import { User, Post, Comment } from '@/types';
+import gymPhoto1 from '@/assets/gym-photo-1.png';
+import gymPhoto2 from '@/assets/gym-photo-2.png';
+import gymPhoto3 from '@/assets/gym-photo-3.png';
+import gymPhoto4 from '@/assets/gym-photo-4.png';
+import gymPhoto5 from '@/assets/gym-photo-5.png';
 
-// Enhanced mock feed posts with realistic gym photos
+// Enhanced mock feed posts with your uploaded gym photos
 const mockFeedPosts: Post[] = [
   {
     id: 'p1',
     userId: 'f1',
     userName: 'Sam',
     userAvatar: 'https://i.pravatar.cc/200?img=12',
-    imageUri: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=1000&fit=crop',
+    imageUri: gymPhoto1,
     timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2h ago
     caption: 'New deadlift PR! 405lbs × 3 💪 Feeling unstoppable',
     meta: {
@@ -50,7 +55,7 @@ const mockFeedPosts: Post[] = [
     userId: 'f2',
     userName: 'Riley',
     userAvatar: 'https://i.pravatar.cc/200?img=45',
-    imageUri: 'https://images.unsplash.com/photo-1434682881908-b43d0467b798?w=800&h=1000&fit=crop',
+    imageUri: gymPhoto2,
     timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), // 3h ago
     caption: 'Morning leg day complete. Squats never get easier 😅',
     meta: {
@@ -78,7 +83,7 @@ const mockFeedPosts: Post[] = [
     userId: 'f3',
     userName: 'Jordan',
     userAvatar: 'https://i.pravatar.cc/200?img=33',
-    imageUri: 'https://images.unsplash.com/photo-1549060279-7e168fcee0c2?w=800&h=1000&fit=crop',
+    imageUri: gymPhoto3,
     timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), // 5h ago
     caption: 'Early bird gets the gains 🌅',
     meta: {
@@ -97,7 +102,7 @@ const mockFeedPosts: Post[] = [
     userId: 'f4',
     userName: 'Casey',
     userAvatar: 'https://i.pravatar.cc/200?img=27',
-    imageUri: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=1000&fit=crop',
+    imageUri: gymPhoto4,
     timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6h ago
     caption: 'Bench press PR! 225lbs for reps 🎯',
     meta: {
@@ -125,7 +130,7 @@ const mockFeedPosts: Post[] = [
     userId: 'f5',
     userName: 'Morgan',
     userAvatar: 'https://i.pravatar.cc/200?img=51',
-    imageUri: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&h=1000&fit=crop',
+    imageUri: gymPhoto5,
     timestamp: new Date(Date.now() - 7 * 60 * 60 * 1000).toISOString(), // 7h ago
     caption: 'Recovery day yoga and stretching 🧘',
     meta: {
