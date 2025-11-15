@@ -6,13 +6,20 @@ const Index = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const onboardingCompleted = localStorage.getItem("onboarding_completed");
-    
+    // Always check API key first
     if (!hasApiKey()) {
       navigate("/api-key-setup");
-    } else if (!onboardingCompleted) {
+      return;
+    }
+    
+    // Then check if onboarding is completed
+    const onboardingCompleted = localStorage.getItem("onboarding_completed");
+    
+    if (!onboardingCompleted) {
+      // New user - must complete onboarding first
       navigate("/onboarding");
     } else {
+      // Onboarding completed - go to home (feed will be locked until they post)
       navigate("/home");
     }
   }, [navigate]);

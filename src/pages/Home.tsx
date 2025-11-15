@@ -174,8 +174,21 @@ const Home = () => {
     };
 
     initializeUser();
-    setPosted(hasPostedToday());
+    // Check if user has posted today - feed is locked until they post
+    const hasPosted = hasPostedToday();
+    setPosted(hasPosted);
     setStreak(storage.getStreak());
+    
+    // Ensure feed is locked by default for new users
+    if (!hasPosted) {
+      // Clear any old post data to ensure feed is locked
+      const lastPostDate = storage.getLastPostDate();
+      const today = new Date().toISOString().split('T')[0];
+      if (lastPostDate && lastPostDate !== today) {
+        // User hasn't posted today, ensure feed is locked
+        setPosted(false);
+      }
+    }
 
     // Load current routine from localStorage
     const saved = localStorage.getItem('currentRoutine');
