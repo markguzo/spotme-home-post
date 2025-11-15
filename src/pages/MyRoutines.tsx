@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, ArrowRight, Sparkles, Play, Star, TrendingUp, Zap } from "lucide-react";
+import { Plus, ArrowRight, Sparkles, Play, Star, TrendingUp, Zap, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
@@ -171,7 +171,15 @@ export default function MyRoutines() {
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold tracking-tight">My Routines</h1>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate("/home")}
+              className="p-2 hover:bg-muted rounded-full transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <h1 className="text-2xl font-bold tracking-tight">My Routines</h1>
+          </div>
           <Button
             size="icon"
             className="h-11 w-11 rounded-2xl bg-gradient-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all hover:scale-105"

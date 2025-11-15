@@ -11,6 +11,10 @@ const OnboardingGoal = () => {
   const [preferredTimeSlot, setPreferredTimeSlot] = useState<string>("");
   const [mainGoal, setMainGoal] = useState<string>("");
   const [workoutTypes, setWorkoutTypes] = useState<string[]>([]);
+  const [experience, setExperience] = useState("");
+  const [duration, setDuration] = useState("");
+  const [equipment, setEquipment] = useState<string[]>([]);
+  const [focus, setFocus] = useState<string[]>([]);
 
   useEffect(() => {
     const storedName = localStorage.getItem("spotme_name");
@@ -56,6 +60,10 @@ const OnboardingGoal = () => {
     localStorage.setItem("spotme_time_slot", preferredTimeSlot);
     localStorage.setItem("spotme_main_goal", mainGoal);
     localStorage.setItem("spotme_workout_types", JSON.stringify(workoutTypes));
+    localStorage.setItem("spotme_experience", experience || "beginner");
+    localStorage.setItem("spotme_duration", duration || "45");
+    localStorage.setItem("spotme_equipment", JSON.stringify(equipment.length > 0 ? equipment : ["full-gym"]));
+    localStorage.setItem("spotme_focus", JSON.stringify(focus.length > 0 ? focus : ["full"]));
     navigate("/connect");
   };
 
@@ -64,6 +72,10 @@ const OnboardingGoal = () => {
     localStorage.setItem("spotme_time_slot", "evening");
     localStorage.setItem("spotme_main_goal", "stay-consistent");
     localStorage.setItem("spotme_workout_types", JSON.stringify(["weights"]));
+    localStorage.setItem("spotme_experience", "beginner");
+    localStorage.setItem("spotme_duration", "45");
+    localStorage.setItem("spotme_equipment", JSON.stringify(["full-gym"]));
+    localStorage.setItem("spotme_focus", JSON.stringify(["full"]));
     navigate("/connect");
   };
 
@@ -162,6 +174,118 @@ const OnboardingGoal = () => {
                   }`}
                 >
                   {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Q5: Experience Level */}
+          <div>
+            <div className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
+              Experience
+            </div>
+            <h3 className="mt-2 text-lg font-semibold text-white">
+              What's your fitness experience level?
+            </h3>
+            <div className="grid grid-cols-3 gap-2 mt-3">
+              {["beginner", "intermediate", "advanced"].map((level) => (
+                <button
+                  key={level}
+                  onClick={() => setExperience(level)}
+                  className={`py-3 rounded-xl border transition ${
+                    experience === level
+                      ? "bg-gradient-to-r from-[#5D5FEC] to-[#8A88FF] border-transparent text-white"
+                      : "border-white/20 bg-black/40 text-white"
+                  }`}
+                >
+                  {level.charAt(0).toUpperCase() + level.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Q6: Duration */}
+          <div>
+            <div className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
+              Workout Duration
+            </div>
+            <h3 className="mt-2 text-lg font-semibold text-white">
+              How long do you want each workout to be?
+            </h3>
+            <div className="grid grid-cols-4 gap-2 mt-3">
+              {["30", "45", "60", "90"].map((dur) => (
+                <button
+                  key={dur}
+                  onClick={() => setDuration(dur)}
+                  className={`py-3 rounded-xl border transition ${
+                    duration === dur
+                      ? "bg-gradient-to-r from-[#5D5FEC] to-[#8A88FF] border-transparent text-white"
+                      : "border-white/20 bg-black/40 text-white"
+                  }`}
+                >
+                  {dur} min
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Q7: Equipment */}
+          <div>
+            <div className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
+              Available Equipment
+            </div>
+            <h3 className="mt-2 text-lg font-semibold text-white">
+              What equipment do you have access to?
+            </h3>
+            <div className="grid grid-cols-2 gap-2 mt-3">
+              {["bodyweight", "dumbbells", "barbell", "machines", "cardio", "full-gym"].map((eq) => (
+                <button
+                  key={eq}
+                  onClick={() => {
+                    setEquipment(prev => 
+                      prev.includes(eq) 
+                        ? prev.filter(e => e !== eq)
+                        : [...prev, eq]
+                    );
+                  }}
+                  className={`py-3 rounded-xl border transition ${
+                    equipment.includes(eq)
+                      ? "bg-gradient-to-r from-[#5D5FEC] to-[#8A88FF] border-transparent text-white"
+                      : "border-white/20 bg-black/40 text-white"
+                  }`}
+                >
+                  {eq.replace("-", " ").replace(/\b\w/g, l => l.toUpperCase())}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Q8: Focus Areas */}
+          <div>
+            <div className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
+              Focus Areas
+            </div>
+            <h3 className="mt-2 text-lg font-semibold text-white">
+              What areas do you want to focus on?
+            </h3>
+            <div className="grid grid-cols-2 gap-2 mt-3">
+              {["upper", "lower", "core", "cardio", "full", "strength"].map((area) => (
+                <button
+                  key={area}
+                  onClick={() => {
+                    setFocus(prev => 
+                      prev.includes(area)
+                        ? prev.filter(a => a !== area)
+                        : [...prev, area]
+                    );
+                  }}
+                  className={`py-3 rounded-xl border transition ${
+                    focus.includes(area)
+                      ? "bg-gradient-to-r from-[#5D5FEC] to-[#8A88FF] border-transparent text-white"
+                      : "border-white/20 bg-black/40 text-white"
+                  }`}
+                >
+                  {area.charAt(0).toUpperCase() + area.slice(1)}
                 </button>
               ))}
             </div>

@@ -1,5 +1,8 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
+import { hasApiKey } from "@/lib/openai";
+import { toast } from "@/hooks/use-toast";
 
 const fitnessCreators = [
   {
@@ -75,6 +78,67 @@ const friendRequests = [
 
 const Connect = () => {
   const navigate = useNavigate();
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleContinue = async () => {
+    setIsGenerating(true);
+    
+    try {
+      // Check if we have onboarding data
+      const goal = localStorage.getItem("spotme_main_goal") || "stay-consistent";
+      const frequency = localStorage.getItem("spotme_goal") || "3";
+      const experience = localStorage.getItem("spotme_experience") || "beginner";
+      const duration = localStorage.getItem("spotme_duration") || "45";
+      const equipment = JSON.parse(localStorage.getItem("spotme_equipment") || '["full-gym"]');
+      const focus = JSON.parse(localStorage.getItem("spotme_focus") || '["full"]');
+      
+      // If we have API key, generate routine
+      if (hasApiKey() && goal && frequency) {
+        const { generateMultiDayRoutine } = await import("@/lib/aiService");
+        
+        const routine = await generateMultiDayRoutine(
+          goal,
+          experience,
+          frequency,
+          duration,
+          equipment.length > 0 ? equipment : ["full-gym"],
+          focus.length > 0 ? focus : ["full"]
+        );
+        
+        // Save routine
+        localStorage.setItem("currentRoutine", JSON.stringify(routine));
+        localStorage.setItem("onboarding_completed", "true");
+        
+        toast({
+          title: "Routine Created!",
+          description: "Your AI-generated routine is ready.",
+        });
+        
+        navigate("/home", { 
+          state: { 
+            message: "Your AI-generated routine is ready!",
+            routine: routine
+          } 
+        });
+      } else {
+        // No API key or missing data, just navigate
+        localStorage.setItem("onboarding_completed", "true");
+        navigate("/home");
+      }
+    } catch (error: any) {
+      console.error("Error generating routine:", error);
+      toast({
+        title: "Routine Generation Failed",
+        description: error.message || "Could not generate routine. You can create one manually.",
+        variant: "destructive",
+      });
+      // Still navigate even if generation fails
+      localStorage.setItem("onboarding_completed", "true");
+      navigate("/home");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
@@ -228,14 +292,19 @@ const Connect = () => {
       {/* Bottom CTA Buttons */}
       <div className="sticky bottom-0 px-4 pb-6 pt-4 bg-gradient-to-t from-black via-black/90 to-transparent">
         <button 
-          onClick={() => navigate("/home")}
-          className="w-full rounded-full py-3.5 text-sm font-semibold bg-[#5D5FEC] text-white shadow-lg"
+          onClick={handleContinue}
+          disabled={isGenerating}
+          className="w-full rounded-full py-3.5 text-sm font-semibold bg-[#5D5FEC] text-white shadow-lg disabled:opacity-50"
         >
-          Continue
+          {isGenerating ? "Creating your routine..." : "Continue"}
         </button>
         <button 
-          onClick={() => navigate("/home")}
-          className="mt-3 w-full rounded-full py-3 text-sm font-medium text-gray-300 border border-neutral-800 bg-transparent"
+          onClick={() => {
+            localStorage.setItem("onboarding_completed", "true");
+            navigate("/home");
+          }}
+          disabled={isGenerating}
+          className="mt-3 w-full rounded-full py-3 text-sm font-medium text-gray-300 border border-neutral-800 bg-transparent disabled:opacity-50"
         >
           Skip for now
         </button>

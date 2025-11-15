@@ -6,11 +6,14 @@ const Index = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if API key is set, if not go to API key setup
+    const onboardingCompleted = localStorage.getItem("onboarding_completed");
+    
     if (!hasApiKey()) {
       navigate("/api-key-setup");
-    } else {
+    } else if (!onboardingCompleted) {
       navigate("/onboarding");
+    } else {
+      navigate("/home");
     }
   }, [navigate]);
 

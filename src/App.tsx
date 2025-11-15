@@ -48,6 +48,7 @@ import WeeklyWrapUp from "./pages/WeeklyWrapUp";
 import Settings from "./pages/Settings";
 import HealthSyncModal from "./pages/HealthSyncModal";
 import InviteFriends from "./pages/InviteFriends";
+import FormAnalysis from "./pages/FormAnalysis";
 
 import NotFound from "./pages/NotFound";
 import { FloatingHomeButton } from "./components/FloatingHomeButton";
@@ -98,6 +99,7 @@ const App = () => (
           <Route path="/ai-routine-generator" element={<AIRoutineGenerator />} />
           <Route path="/ai-gym-helper" element={<AIGymHelper />} />
           <Route path="/apple-watch" element={<AppleWatchConnect />} />
+          <Route path="/form-analysis" element={<FormAnalysis />} />
           <Route path="/profile" element={<Profile />} />
           
           {/* Profile Hub (from repo 2) */}
