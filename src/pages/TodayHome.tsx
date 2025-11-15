@@ -2,18 +2,19 @@ import { useState, useEffect } from 'react';
 import { CompactStatsBar } from '@/components/CompactStatsBar';
 import { VerticalFeed } from '@/components/VerticalFeed';
 import { PostWorkoutModal } from '@/components/PostWorkoutModal';
+import { UnlockPromptModal } from '@/components/UnlockPromptModal';
 import { storage } from '@/lib/storage';
 import { hasPostedToday } from '@/lib/streak';
-import { User, Post } from '@/types';
+import { User, Post, Comment } from '@/types';
 
-// Enhanced mock feed posts with full engagement data
+// Enhanced mock feed posts with realistic gym photos
 const mockFeedPosts: Post[] = [
   {
     id: 'p1',
     userId: 'f1',
     userName: 'Sam',
-    userAvatar: 'https://picsum.photos/seed/sam/200',
-    imageUri: 'https://picsum.photos/seed/sam-workout/800',
+    userAvatar: 'https://i.pravatar.cc/200?img=12',
+    imageUri: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=1000&fit=crop',
     timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2h ago
     caption: 'New deadlift PR! 405lbs × 3 💪 Feeling unstoppable',
     meta: {
@@ -29,7 +30,7 @@ const mockFeedPosts: Post[] = [
           id: 'c1',
           userId: 'f2',
           userName: 'Riley',
-          userAvatar: 'https://picsum.photos/seed/riley/200',
+          userAvatar: 'https://i.pravatar.cc/200?img=45',
           text: 'Beast mode! 🔥',
           timestamp: new Date(Date.now() - 1.5 * 60 * 60 * 1000).toISOString()
         },
@@ -37,7 +38,7 @@ const mockFeedPosts: Post[] = [
           id: 'c2',
           userId: 'f3',
           userName: 'Jordan',
-          userAvatar: 'https://picsum.photos/seed/jordan/200',
+          userAvatar: 'https://i.pravatar.cc/200?img=33',
           text: "Let's goooo! That's insane",
           timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString()
         }
@@ -48,8 +49,8 @@ const mockFeedPosts: Post[] = [
     id: 'p2',
     userId: 'f2',
     userName: 'Riley',
-    userAvatar: 'https://picsum.photos/seed/riley/200',
-    imageUri: 'https://picsum.photos/seed/riley-workout/800',
+    userAvatar: 'https://i.pravatar.cc/200?img=45',
+    imageUri: 'https://images.unsplash.com/photo-1434682881908-b43d0467b798?w=800&h=1000&fit=crop',
     timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), // 3h ago
     caption: 'Morning leg day complete. Squats never get easier 😅',
     meta: {
@@ -65,7 +66,7 @@ const mockFeedPosts: Post[] = [
           id: 'c3',
           userId: 'f1',
           userName: 'Sam',
-          userAvatar: 'https://picsum.photos/seed/sam/200',
+          userAvatar: 'https://i.pravatar.cc/200?img=12',
           text: 'Keep grinding! 💪',
           timestamp: new Date(Date.now() - 2.5 * 60 * 60 * 1000).toISOString()
         }
@@ -76,8 +77,8 @@ const mockFeedPosts: Post[] = [
     id: 'p3',
     userId: 'f3',
     userName: 'Jordan',
-    userAvatar: 'https://picsum.photos/seed/jordan/200',
-    imageUri: 'https://picsum.photos/seed/jordan-workout/800',
+    userAvatar: 'https://i.pravatar.cc/200?img=33',
+    imageUri: 'https://images.unsplash.com/photo-1549060279-7e168fcee0c2?w=800&h=1000&fit=crop',
     timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), // 5h ago
     caption: 'Early bird gets the gains 🌅',
     meta: {
@@ -95,8 +96,8 @@ const mockFeedPosts: Post[] = [
     id: 'p4',
     userId: 'f4',
     userName: 'Casey',
-    userAvatar: 'https://picsum.photos/seed/casey/200',
-    imageUri: 'https://picsum.photos/seed/casey-workout/800',
+    userAvatar: 'https://i.pravatar.cc/200?img=27',
+    imageUri: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&h=1000&fit=crop',
     timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6h ago
     caption: 'Bench press PR! 225lbs for reps 🎯',
     meta: {
@@ -112,7 +113,7 @@ const mockFeedPosts: Post[] = [
           id: 'c4',
           userId: 'f5',
           userName: 'Morgan',
-          userAvatar: 'https://picsum.photos/seed/morgan/200',
+          userAvatar: 'https://i.pravatar.cc/200?img=51',
           text: 'Crushing it! 🔥🔥',
           timestamp: new Date(Date.now() - 5.5 * 60 * 60 * 1000).toISOString()
         }
@@ -123,8 +124,8 @@ const mockFeedPosts: Post[] = [
     id: 'p5',
     userId: 'f5',
     userName: 'Morgan',
-    userAvatar: 'https://picsum.photos/seed/morgan/200',
-    imageUri: 'https://picsum.photos/seed/morgan-workout/800',
+    userAvatar: 'https://i.pravatar.cc/200?img=51',
+    imageUri: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&h=1000&fit=crop',
     timestamp: new Date(Date.now() - 7 * 60 * 60 * 1000).toISOString(), // 7h ago
     caption: 'Recovery day yoga and stretching 🧘',
     meta: {
@@ -142,8 +143,8 @@ const mockFeedPosts: Post[] = [
     id: 'p6',
     userId: 'f6',
     userName: 'Taylor',
-    userAvatar: 'https://picsum.photos/seed/taylor/200',
-    imageUri: 'https://picsum.photos/seed/taylor-workout/800',
+    userAvatar: 'https://i.pravatar.cc/200?img=18',
+    imageUri: 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=800&h=1000&fit=crop',
     timestamp: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(), // 8h ago
     caption: 'Back and biceps pump 💪 Feeling strong',
     meta: {
@@ -159,7 +160,7 @@ const mockFeedPosts: Post[] = [
           id: 'c5',
           userId: 'f7',
           userName: 'Alex',
-          userAvatar: 'https://picsum.photos/seed/alex/200',
+          userAvatar: 'https://i.pravatar.cc/200?img=68',
           text: 'Nice work! 💯',
           timestamp: new Date(Date.now() - 7.5 * 60 * 60 * 1000).toISOString()
         }
@@ -170,8 +171,8 @@ const mockFeedPosts: Post[] = [
     id: 'p7',
     userId: 'f7',
     userName: 'Alex',
-    userAvatar: 'https://picsum.photos/seed/alex/200',
-    imageUri: 'https://picsum.photos/seed/alex-workout/800',
+    userAvatar: 'https://i.pravatar.cc/200?img=68',
+    imageUri: 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&h=1000&fit=crop',
     timestamp: new Date(Date.now() - 9 * 60 * 60 * 1000).toISOString(), // 9h ago
     caption: 'Shoulder day complete. Time to grow! 🚀',
     meta: {
@@ -189,8 +190,8 @@ const mockFeedPosts: Post[] = [
     id: 'p8',
     userId: 'f8',
     userName: 'Jamie',
-    userAvatar: 'https://picsum.photos/seed/jamie/200',
-    imageUri: 'https://picsum.photos/seed/jamie-workout/800',
+    userAvatar: 'https://i.pravatar.cc/200?img=25',
+    imageUri: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&h=1000&fit=crop',
     timestamp: new Date(Date.now() - 10 * 60 * 60 * 1000).toISOString(), // 10h ago
     caption: 'Hit a new 5K PR on the treadmill! 🏃‍♂️💨',
     meta: {
@@ -206,7 +207,7 @@ const mockFeedPosts: Post[] = [
           id: 'c6',
           userId: 'f1',
           userName: 'Sam',
-          userAvatar: 'https://picsum.photos/seed/sam/200',
+          userAvatar: 'https://i.pravatar.cc/200?img=12',
           text: 'Speed demon! 🔥',
           timestamp: new Date(Date.now() - 9.5 * 60 * 60 * 1000).toISOString()
         },
@@ -214,7 +215,7 @@ const mockFeedPosts: Post[] = [
           id: 'c7',
           userId: 'f2',
           userName: 'Riley',
-          userAvatar: 'https://picsum.photos/seed/riley/200',
+          userAvatar: 'https://i.pravatar.cc/200?img=45',
           text: 'Inspired! 💪',
           timestamp: new Date(Date.now() - 9 * 60 * 60 * 1000).toISOString()
         }
@@ -229,6 +230,7 @@ const TodayHome = () => {
   const [streak, setStreak] = useState(0);
   const [feedPosts, setFeedPosts] = useState<Post[]>([]);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+  const [isUnlockPromptOpen, setIsUnlockPromptOpen] = useState(false);
 
   useEffect(() => {
     // Auto-clear data in dev mode on every load
@@ -283,7 +285,7 @@ const TodayHome = () => {
     return {
       ...todayPost,
       userName: userData.name,
-      userAvatar: `https://picsum.photos/seed/${userData.username}/200`,
+      userAvatar: `https://i.pravatar.cc/200?u=${userData.username}`,
       caption: 'Just crushed today\'s workout! 💪',
       meta: {
         ...todayPost.meta,
@@ -301,6 +303,34 @@ const TodayHome = () => {
   const handlePostClick = (post: Post) => {
     console.log('Post clicked:', post);
     // TODO: Open full-screen WorkoutDetailView
+  };
+
+  const handleAddComment = (postId: string, text: string) => {
+    const newComment: Comment = {
+      id: `c_${Date.now()}`,
+      userId: user!.id,
+      userName: user!.name,
+      userAvatar: `https://i.pravatar.cc/200?u=${user!.username}`,
+      text,
+      timestamp: new Date().toISOString()
+    };
+
+    setFeedPosts(posts => 
+      posts.map(post => {
+        if (post.id === postId) {
+          return {
+            ...post,
+            engagement: {
+              ...post.engagement,
+              comments: [...post.engagement.comments, newComment]
+            }
+          };
+        }
+        return post;
+      })
+    );
+
+    storage.addComment(postId, newComment);
   };
 
   const handlePostSuccess = (post: Post) => {
@@ -329,8 +359,19 @@ const TodayHome = () => {
         posts={feedPosts}
         isLocked={!posted}
         onPostClick={handlePostClick}
+        onUnlockClick={() => setIsUnlockPromptOpen(true)}
         currentUserId={user.id}
-        onOpenPostModal={() => setIsPostModalOpen(true)}
+        onAddComment={handleAddComment}
+        currentUserName={user.name}
+        currentUserAvatar={`https://i.pravatar.cc/200?u=${user.username}`}
+      />
+
+      {/* Unlock Prompt Modal */}
+      <UnlockPromptModal
+        isOpen={isUnlockPromptOpen}
+        onClose={() => setIsUnlockPromptOpen(false)}
+        onPostClick={() => setIsPostModalOpen(true)}
+        friendCount={feedPosts.length}
       />
 
       {/* Post Workout Modal */}
