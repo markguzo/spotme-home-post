@@ -18,14 +18,14 @@ export const VerticalFeed = ({
   onOpenPostModal
 }: VerticalFeedProps) => {
   return (
-    <div className="relative min-h-[85vh]">
+    <div className="relative min-h-screen pb-32">
       {/* Feed Container */}
       <div className={`max-w-2xl mx-auto pb-8 transition-all duration-1500 ${
         isLocked 
-          ? 'blur-[100px] brightness-[0.2] saturate-0 opacity-50 pointer-events-none select-none' 
-          : 'blur-0 brightness-100 opacity-100'
+          ? 'blur-[20px] brightness-[0.5] saturate-[0.3] opacity-70 select-none' 
+          : 'blur-0 brightness-100 saturate-100 opacity-100'
       }`}>
-        {posts.slice(0, isLocked ? 6 : posts.length).map((post, index) => (
+        {posts.slice(0, isLocked ? 8 : posts.length).map((post, index) => (
           <FeedPostCard
             key={post.id}
             post={post}
