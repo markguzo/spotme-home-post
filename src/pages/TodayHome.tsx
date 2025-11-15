@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { CompactStatsBar } from '@/components/CompactStatsBar';
 import { VerticalFeed } from '@/components/VerticalFeed';
+import { PostWorkoutModal } from '@/components/PostWorkoutModal';
 import { storage } from '@/lib/storage';
 import { hasPostedToday } from '@/lib/streak';
 import { User, Post } from '@/types';
@@ -227,6 +228,7 @@ const TodayHome = () => {
   const [posted, setPosted] = useState(false);
   const [streak, setStreak] = useState(0);
   const [feedPosts, setFeedPosts] = useState<Post[]>([]);
+  const [isPostModalOpen, setIsPostModalOpen] = useState(false);
 
   useEffect(() => {
     // Auto-clear data in dev mode on every load
@@ -301,6 +303,12 @@ const TodayHome = () => {
     // TODO: Open full-screen WorkoutDetailView
   };
 
+  const handlePostSuccess = (post: Post) => {
+    setPosted(true);
+    setStreak(storage.getStreak());
+    setFeedPosts([post, ...mockFeedPosts]);
+  };
+
   if (!user) return null;
 
   return (
@@ -322,6 +330,14 @@ const TodayHome = () => {
         isLocked={!posted}
         onPostClick={handlePostClick}
         currentUserId={user.id}
+        onOpenPostModal={() => setIsPostModalOpen(true)}
+      />
+
+      {/* Post Workout Modal */}
+      <PostWorkoutModal
+        isOpen={isPostModalOpen}
+        onClose={() => setIsPostModalOpen(false)}
+        onPostSuccess={handlePostSuccess}
       />
     </div>
   );

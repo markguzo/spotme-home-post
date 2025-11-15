@@ -6,9 +6,10 @@ interface FeedGridProps {
   friends: Friend[];
   isLocked: boolean;
   userPost?: Post;
+  onOpenPostModal?: () => void;
 }
 
-export const FeedGrid = ({ friends, isLocked, userPost }: FeedGridProps) => {
+export const FeedGrid = ({ friends, isLocked, userPost, onOpenPostModal }: FeedGridProps) => {
   return (
     <div className="relative min-h-[70vh]">
       {/* Grid Container */}
@@ -35,7 +36,12 @@ export const FeedGrid = ({ friends, isLocked, userPost }: FeedGridProps) => {
       </div>
 
       {/* Locked Overlay */}
-      {isLocked && <LockedFeedOverlay friendCount={friends.length} />}
+      {isLocked && (
+        <LockedFeedOverlay 
+          friendCount={friends.length} 
+          onPostClick={onOpenPostModal || (() => {})} 
+        />
+      )}
     </div>
   );
 };

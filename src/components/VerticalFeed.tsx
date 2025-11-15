@@ -7,13 +7,15 @@ interface VerticalFeedProps {
   isLocked: boolean;
   onPostClick: (post: Post) => void;
   currentUserId: string;
+  onOpenPostModal: () => void;
 }
 
 export const VerticalFeed = ({ 
   posts, 
   isLocked, 
   onPostClick,
-  currentUserId 
+  currentUserId,
+  onOpenPostModal
 }: VerticalFeedProps) => {
   return (
     <div className="relative min-h-[85vh]">
@@ -38,7 +40,7 @@ export const VerticalFeed = ({
       </div>
 
       {/* Locked Overlay */}
-      {isLocked && <LockedFeedOverlay friendCount={posts.length} />}
+      {isLocked && <LockedFeedOverlay friendCount={posts.length} onPostClick={onOpenPostModal} />}
     </div>
   );
 };
